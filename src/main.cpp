@@ -503,7 +503,7 @@ int main(int argc, char** argv)
             pattern_format = optarg;
             break;
         case L'q':
-            quality = atof(optarg);
+            quality = _wtof(optarg);
             break;
         case L'v':
             verbose = 1;
