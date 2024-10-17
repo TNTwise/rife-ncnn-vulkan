@@ -685,7 +685,7 @@ int main(int argc, char** argv)
 
     bool rife_v2 = false;
     bool rife_v4 = false;
-    bool extra_padding = false;
+    int padding = 32;
     if (model.find(PATHSTR("rife-v2")) != path_t::npos)
     {
         // fine
@@ -714,11 +714,11 @@ int main(int argc, char** argv)
         rife_v4 = true;
         if (model.find(PATHSTR("rife-v4.25")) != path_t::npos)
         {
-            extra_padding = true;
+            padding = 64;
         }
         if (model.find(PATHSTR("rife-v4.26")) != path_t::npos)
         {
-            extra_padding = true;
+            padding = 64;
         }
     }
     else if (model.find(PATHSTR("rife-v5")) != path_t::npos)
@@ -876,7 +876,7 @@ int main(int argc, char** argv)
         {
             int num_threads = gpuid[i] == -1 ? jobs_proc[i] : 1;
 
-            rife[i] = new RIFE(gpuid[i], tta_mode, tta_temporal_mode, uhd_mode, num_threads, rife_v2, rife_v4, extra_padding);
+            rife[i] = new RIFE(gpuid[i], tta_mode, tta_temporal_mode, uhd_mode, num_threads, rife_v2, rife_v4, padding);
 
             rife[i]->load(modeldir);
         }
