@@ -716,6 +716,10 @@ int main(int argc, char** argv)
         {
             padding = 64;
         }
+        if (model.find(PATHSTR("rife-v4.25-lite")) != path_t::npos)
+        {
+            padding = 128;
+        }
         if (model.find(PATHSTR("rife-v4.26")) != path_t::npos)
         {
             padding = 64;
