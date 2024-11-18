@@ -70,7 +70,7 @@ jobs:
     
 
   openmp-macos:
-    runs-on: macos-12
+    runs-on: macos-13
     steps:
     - name: cache-openmp
       id: cache-openmp
@@ -126,7 +126,7 @@ jobs:
 
   macos:
     needs: [setup, openmp-macos]
-    runs-on: macos-12
+    runs-on: macos-13
     env:
       PACKAGENAME: ${{ needs.setup.outputs.APPNAME }}-${{ needs.setup.outputs.VERSION }}-macos
     steps:
