@@ -2500,7 +2500,7 @@ int RIFE::process_v4(const ncnn::Mat& in0image, const ncnn::Mat& in1image, float
     int w_padded, h_padded;
     
     w_padded = (w + padding - 1) / padding * padding;
-    h_padded = (h + padding) / padding * padding;
+    h_padded = (h + padding - 1) / padding * padding;
 
     const size_t in_out_tile_elemsize = opt.use_fp16_storage ? 2u : 4u;
 
@@ -3231,7 +3231,7 @@ int RIFE::process_v4_cpu(const ncnn::Mat& in0image, const ncnn::Mat& in1image, f
     // pad to 32n
     int w_padded, h_padded;
     w_padded = (w + padding - 1) / padding * padding;
-    h_padded = (h + padding) / padding * padding;
+    h_padded = (h + padding - 1) / padding * padding;
     
     ncnn::Mat in0;
     ncnn::Mat in1;
