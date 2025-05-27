@@ -45,9 +45,8 @@ jobs:
       run: |
         distrobox enter ubuntu-20-04 -- sudo apt install cmake gcc g++ --yes
         distrobox enter ubuntu-20-04 -- ls
-        distrobox enter ubuntu-20-04 -- mkdir build && cd build
-        distrobox enter ubuntu-20-04 -- export VULKAN_SDK=../1.3.268.0/x86_64 && cmake ../src
-        distrobox enter ubuntu-20-04 -- export VULKAN_SDK=../1.3.268.0/x86_64 && cmake --build . -j 2
+        distrobox enter ubuntu-20-04 -- mkdir build
+        distrobox enter ubuntu-20-04 -- export VULKAN_SDK=`pwd`/1.3.268.0/x86_64 && cd build && cmake ../src && cmake --build . -j 2
     - name: package
       run: |
         distrobox enter ubuntu-20-04 -- mkdir -p ubuntu
