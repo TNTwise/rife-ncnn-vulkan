@@ -37,25 +37,25 @@ jobs:
           distrobox enter ubuntu-20-04 -- ls
     - name: vulkansdk
       run: |
-        wget https://sdk.lunarg.com/sdk/download/1.3.268.0/linux/vulkansdk-linux-x86_64-1.3.268.0.tar.xz -O vulkansdk-linux-x86_64-1.3.268.0.tar.gz
-        tar -xf vulkansdk-linux-x86_64-1.3.268.0.tar.gz
-        rm -rf 1.3.268.0/source 1.3.268.0/samples
-        find 1.3.268.0 -type f | grep -v -E 'vulkan|glslang' | xargs rm
+        distrobox enter ubuntu-20-04 -- wget https://sdk.lunarg.com/sdk/download/1.3.268.0/linux/vulkansdk-linux-x86_64-1.3.268.0.tar.xz -O vulkansdk-linux-x86_64-1.3.268.0.tar.gz
+        distrobox enter ubuntu-20-04 -- tar -xf vulkansdk-linux-x86_64-1.3.268.0.tar.gz
+        distrobox enter ubuntu-20-04 -- rm -rf 1.3.268.0/source 1.3.268.0/samples
+        distrobox enter ubuntu-20-04 -- find 1.3.268.0 -type f | grep -v -E 'vulkan|glslang' | xargs rm
     - name: build
       run: |
-        sudo apt install cmake gcc g++ --yes
-        export VULKAN_SDK=`pwd`/1.3.268.0/x86_64
-        mkdir build && cd build
-        cmake ../src
-        cmake --build . -j 2
+        distrobox enter ubuntu-20-04 -- sudo apt install cmake gcc g++ --yes
+        distrobox enter ubuntu-20-04 -- export VULKAN_SDK=`pwd`/1.3.268.0/x86_64
+        distrobox enter ubuntu-20-04 -- mkdir build && cd build
+        distrobox enter ubuntu-20-04 -- cmake ../src
+        distrobox enter ubuntu-20-04 -- cmake --build . -j 2
     - name: package
       run: |
-        mkdir -p ubuntu
-        cp README.md LICENSE ubuntu
-        cp build/${{ needs.setup.outputs.APPNAME }} ubuntu
-        strip -g ubuntu/${{ needs.setup.outputs.APPNAME }}
-        cp -r models/* ubuntu
-        zip -9 -r ubuntu.zip ubuntu
+        distrobox enter ubuntu-20-04 -- mkdir -p ubuntu
+        distrobox enter ubuntu-20-04 -- cp README.md LICENSE ubuntu
+        distrobox enter ubuntu-20-04 -- cp build/${{ needs.setup.outputs.APPNAME }} ubuntu
+        distrobox enter ubuntu-20-04 -- strip -g ubuntu/${{ needs.setup.outputs.APPNAME }}
+        distrobox enter ubuntu-20-04 -- cp -r models/* ubuntu
+        distrobox enter ubuntu-20-04 -- zip -9 -r ubuntu.zip ubuntu
     - name: log
       run: |
           ls
