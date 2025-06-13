@@ -267,28 +267,7 @@ jobs:
         Copy-Item -Verbose -Path "C:\windows\system32\vcomp140.dll" -Destination "${{ env.PACKAGENAME }}"
         Copy-Item -Verbose -Recurse -Path "models\*" -Destination "${{ env.PACKAGENAME }}"
         7z a -r ${{ env.PACKAGENAME }}.zip ${{ env.PACKAGENAME }}
-    - name: log release
-      run: |
-         dir
-         cd build
-         dir
-         cd Release
-         dir
-         
-    - name: log ncnn
-      run: |
-          cd build
-          cd ncnn
-          dir
-    - name: logx64
-      run: |
-          cd build
-          cd x64
-          dir
-    - name: log
-      run: |
-          cd D:\a\rife-ncnn-vulkan\rife-ncnn-vulkan\rife-ncnn-vulkan-refs\heads
-          dir
+
     - name: upload
       uses: actions/upload-artifact@v4
       with:
@@ -297,24 +276,29 @@ jobs:
 
   windows-arm:
     needs: [setup]
-    runs-on: windows-11-arm
+    runs-on: windows-latest
     env:
-      PACKAGENAME: ${{ needs.setup.outputs.APPNAME }}-${{ needs.setup.outputs.VERSION }}-windows-11-arm
+      PACKAGENAME: ${{ needs.setup.outputs.APPNAME }}-${{ needs.setup.outputs.VERSION }}-windows
     steps:
     - uses: actions/checkout@v4
       with:
         submodules: 'recursive'
-    - name: Prepare Vulkan SDK
-      uses: humbletim/setup-vulkan-sdk@v1.2.1
+    - name: cache-vulkansdk
+      id: cache-vulkansdk
+      uses: actions/cache@v4
       with:
-         vulkan-query-version: 1.3.296.0
-         vulkan-components: Vulkan-Headers, Vulkan-Loader
-         vulkan-use-cache: true
-   
+        path: "VulkanSDK"
+        key: VulkanSDK-1.3.268.0-Installer
+    - name: vulkansdk
+      if: steps.cache-vulkansdk.outputs.cache-hit != 'true'
+      run: |
+        Invoke-WebRequest -Uri https://sdk.lunarg.com/sdk/download/1.3.268.0/windows/VulkanSDK-1.3.268.0-Installer.exe?Human=true -OutFile VulkanSDK-1.3.268.0-Installer.exe
+        7z x -aoa ./VulkanSDK-1.3.268.0-Installer.exe -oVulkanSDK
     - name: build
       run: |
+        $env:VULKAN_SDK="$(pwd)/VulkanSDK"
         mkdir build; cd build
-        cmake -A x64 ../src
+        cmake -A arm64 ../src
         cmake --build . --config Release -j 2
     - name: package
       run: |
@@ -325,22 +309,11 @@ jobs:
         Copy-Item -Verbose -Path "C:\windows\system32\vcomp140.dll" -Destination "${{ env.PACKAGENAME }}"
         Copy-Item -Verbose -Recurse -Path "models\*" -Destination "${{ env.PACKAGENAME }}"
         7z a -r ${{ env.PACKAGENAME }}.zip ${{ env.PACKAGENAME }}
-    - name: log release
-      run: |
-         dir
-         cd build
-         dir
-         cd Release
-         dir
-         
-    - name: log
-      run: |
-          cd D:\a\rife-ncnn-vulkan\rife-ncnn-vulkan\rife-ncnn-vulkan-refs\heads
-          dir
+   
     - name: upload
       uses: actions/upload-artifact@v4
       with:
-        name: windows-11-arm
+        name: windows-arm
         path: D:\a\rife-ncnn-vulkan\rife-ncnn-vulkan\rife-ncnn-vulkan-refs\heads\master-windows.zip
   
   release:
