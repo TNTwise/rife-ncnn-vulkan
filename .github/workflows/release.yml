@@ -74,7 +74,7 @@ jobs:
 
     - name: deps
       run: |
-        sudo apt install mesa-vulkan-drivers vulkan-tools cmake gcc g++ --yes
+        sudo apt install mesa-vulkan-drivers vulkan-tools cmake gcc g++ libvulkan-dev --yes
     - name: build
       run: |
         mkdir build
