@@ -23,7 +23,7 @@ jobs:
 
   ubuntu:
     needs: [setup]
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-22.04
     env:
       PACKAGENAME: ${{ needs.setup.outputs.APPNAME }}-${{ needs.setup.outputs.VERSION }}-ubuntu
     steps:
@@ -45,12 +45,12 @@ jobs:
         export VULKAN_SDK=`pwd`/1.3.268.0/x86_64 && cd build && cmake ../src && cmake --build . -j 2
     - name: package
       run: |
-        distrobox enter ubuntu-20-04 -- mkdir -p ubuntu
-        distrobox enter ubuntu-20-04 -- cp README.md LICENSE ubuntu
-        distrobox enter ubuntu-20-04 -- cp build/${{ needs.setup.outputs.APPNAME }} ubuntu
-        distrobox enter ubuntu-20-04 -- strip -g ubuntu/${{ needs.setup.outputs.APPNAME }}
-        distrobox enter ubuntu-20-04 -- cp -r models/* ubuntu
-        distrobox enter ubuntu-20-04 -- zip -9 -r ubuntu.zip ubuntu
+        mkdir -p ubuntu
+        cp README.md LICENSE ubuntu
+        cp build/${{ needs.setup.outputs.APPNAME }} ubuntu
+        strip -g ubuntu/${{ needs.setup.outputs.APPNAME }}
+        cp -r models/* ubuntu
+        zip -9 -r ubuntu.zip ubuntu
     - name: log
       run: |
           ls
@@ -61,6 +61,42 @@ jobs:
       with:
         name: ubuntu
         path: ubuntu.zip
+
+  ubuntu-arm:
+    needs: [setup]
+    runs-on: ubuntu-22.04-arm
+    env:
+      PACKAGENAME: ${{ needs.setup.outputs.APPNAME }}-${{ needs.setup.outputs.VERSION }}-ubuntu-arm
+    steps:
+    - uses: actions/checkout@v4
+      with:
+        submodules: 'recursive'
+
+    - name: deps
+      run: |
+        sudo apt install mesa-vulkan-drivers vulkan-tools cmake gcc g++ --yes
+    - name: build
+      run: |
+        mkdir build
+        cd build && cmake ../src && cmake --build . -j 2
+    - name: package
+      run: |
+        mkdir -p ubuntu-arm
+        cp README.md LICENSE ubuntu-arm
+        cp build/${{ needs.setup.outputs.APPNAME }} ubuntu-arm
+        strip -g ubuntu-arm/${{ needs.setup.outputs.APPNAME }}
+        cp -r models/* ubuntu-arm
+        zip -9 -r ubuntu-arm.zip ubuntu-arm
+    - name: log
+      run: |
+          ls
+          cd build && ls
+          
+    - name: upload
+      uses: actions/upload-artifact@v4
+      with:
+        name: ubuntu-arm
+        path: ubuntu-arm.zip
     
 
   openmp-macos:
